@@ -1,3 +1,10 @@
+/*******************************************************************************
+* Kernel to compute the masked 3D convolution of a tensor and a kernel.
+* The convolution is done with padding and the output is 'same', i.e. the
+* output is the same size as the input.
+*
+*/
+
 #include <iostream>
 #include <cooperative_groups.h>
 namespace cg = cooperative_groups;
@@ -55,7 +62,14 @@ __global__ void dot_product(float* out, float* v1, float* v2, int n) {
     }
 }
 
-__global__ void convolution_1d(float* out, float* arr, float* kernel, int n_arr, int n_kernel, bool* mask, float pad_val) {
+__global__ void convolution_1d(
+    float* out,
+    float* arr,
+    int n_arr,
+    float* kernel,
+    int n_kernel,
+    bool* mask,
+    float pad_val) {
 
     int t_idx = threadIdx.x; // thread index
     int b_dim = blockDim.x; // number of threads per block
@@ -69,22 +83,23 @@ __global__ void convolution_1d(float* out, float* arr, float* kernel, int n_arr,
 
         // loop over kernel
         for (int j = 0; j < n_kernel; ++j) {
-            if (i - j >= 0 && i - j < n_arr) {
-                out[i] += arr[i - j] * kernel[j];
+
+            // index the array with implicitreversed kernel
+            int input_index = i - j + n_kernel / 2;
+
+            if (input_index >= 0 && input_index < n_arr) {
+                out[i] += arr[input_index] * kernel[j];
             }
             else {
                 out[i] += pad_val * kernel[j];
             }
         }
     }
-
-
 }
 
 int main() {
-    int vector_size = 10000000;
-    int kernel_size = 100;
-
+    int vector_size = 3;
+    int kernel_size = 3;
 
     // TODO: use deviceQuery to get best block size
     int block_size = 256;
@@ -99,34 +114,45 @@ int main() {
 
     // Allocate memory
     cudaMallocManaged(&v1, vector_size * sizeof(float));
-    cudaMallocManaged(&kernel, vector_size * sizeof(float));
+    cudaMallocManaged(&mask, vector_size * sizeof(bool));
+    cudaMallocManaged(&kernel, kernel_size * sizeof(float));
     cudaMallocManaged(&v_out, vector_size * sizeof(float));
-    cudaMallocManaged(&mask, kernel_size * sizeof(bool));
+
+    for (int i = 0; i < vector_size; i++) {
+        v1[i] = i + 1.0f;
+        v_out[i] = 0.0f;
+    }
+    for (int i = 0; i < kernel_size; i++) {
+        kernel[i] = 4.0f + i;
+    }
+
 
     // Initialize variables
-    for (int i = 0; i < vector_size; i++) {
-        v1[i] = 1.0f;
-    }
+    // for (int i = 0; i < vector_size; i++) {
+    //     v1[i] = 4.0f;
+    //     if (i % 2 == 0) {
+    //         mask[i] = true;
+    //     }
+    //     else {
+    //         mask[i] = false;
+    //     }
+    // }
 
-    for (int i = 0; i < kernel_size; i++) {
-        kernel[i] = 1.0f;
-        if (i % 2 == 0) {
-            mask[i] = true;
-        }
-        else {
-            mask[i] = false;
-        }
-    }
+    // for (int i = 0; i < kernel_size; i++) {
+    //     kernel[i] = 1.0f / kernel_size;
+    // }
 
     // Launch kernel
-    convolution_1d << < num_blocks, block_size, block_size * sizeof(float) >> > (v_out, v1, kernel, vector_size, kernel_size, mask, 0.0f);
+    convolution_1d << < num_blocks, block_size >> > (v_out, v1, vector_size, kernel, kernel_size, mask, 0.0f);
 
     // Wait for kernel to finish
     cudaDeviceSynchronize();
 
     // Print result
-    // should be 2 * N
-    std::cout << v_out[50] << std::endl;
+    for (int i = 0; i < vector_size; i++) {
+        std::cout << v_out[i] << " ";
+    }
+    std::cout << std::endl;
 
 
     // Free memory
