@@ -4,7 +4,7 @@ Currently used to learn CUDA, hence the code is not production-ready and might n
 
 ## Motivation
 
-Masked convolutions are convolutions where the input array contain "invalid" elements which should not participate in the end result. For example, consider an array with 3 elements and a normalized kernel with 3 elements. Lets assume that the central element in the input array is invalid, i.e. the mask is [0,1,1].
+Masked convolutions are convolutions where the input array contain "invalid" elements which should not participate in the end result. For example, consider an array with 3 elements and a normalized kernel with 3 elements. Lets assume that the left element in the input array is invalid, i.e. the mask is [0,1,1].
 ```
 arrary = [1,2,1]
 kernel = [0.25,0.5,0.25]
