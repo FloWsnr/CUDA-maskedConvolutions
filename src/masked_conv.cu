@@ -9,59 +9,6 @@
 #include <cooperative_groups.h>
 namespace cg = cooperative_groups;
 
-
-__global__ void dot_product(float* out, float* v1, float* v2, int n) {
-
-    cg::thread_block cta = cg::this_thread_block();
-
-    int t_idx = threadIdx.x; // thread index
-    int b_dim = blockDim.x; // number of threads per block
-    int b_idx = blockIdx.x; // block index
-
-    int idx = b_idx * b_dim + t_idx;
-    int stride = b_dim * gridDim.x; // total number of threads
-
-    // make shared memory the next power of 2 multiple of block size
-    extern __shared__ float sdata[]; // shared memory for intermediate results
-
-
-    float sum = 0.0f;
-    for (int i = idx; i < n; i += stride) {
-        // each thread computes one element (or multiple)
-        // of the output and already computes the sum of these elements
-        sum += v1[i] * v2[i];
-    }
-    sdata[t_idx] = sum; // partial sum is stored in shared memory
-    cg::sync(cta); // wait for all threads to finish
-
-    // reduction
-    for (int stride = b_dim / 2; stride > 0; stride /= 2) {
-        // the lower half of threads per block perform the reduction
-        // afterwards, the stride is divided by two and repeat
-        // until all values are summed in element 0 of the shared memory
-
-        // Example:
-        // block dim: 256
-        // -> stride: 128
-        // -> sdata[0] = sdata[0] + sdata[128]
-        // -> sdata[1] = sdata[1] + sdata[129]
-
-        // Next iteration:
-        // -> stride: 64
-        // -> sdata[0] = sdata[0] + sdata[64]
-        // -> sdata[1] = sdata[1] + sdata[65]
-
-        if (t_idx < stride) {
-            sdata[t_idx] += sdata[t_idx + stride];
-        }
-        cg::sync(cta); // wait for all threads to finish
-    }
-
-    if (t_idx == 0) {
-        atomicAdd(out, sdata[0]);
-    }
-}
-
 __global__ void convolution_1d(
     float* out,
     float* arr,
@@ -71,21 +18,25 @@ __global__ void convolution_1d(
     bool* mask,
     float pad_val) {
 
-    int t_idx = threadIdx.x; // thread index
-    int b_dim = blockDim.x; // number of threads per block
-    int b_idx = blockIdx.x; // block index
+    int t_idx{ threadIdx.x }; // thread index
+    int b_dim{ blockDim.x }; // number of threads per block
+    int b_idx{ blockIdx.x }; // block index
 
-    int idx = b_idx * b_dim + t_idx;
-    int stride = b_dim * gridDim.x; // total number of threads
+    int idx{ b_idx * b_dim + t_idx };
+    int stride{ b_dim * gridDim.x }; // total number of threads
 
     for (int i = idx; i < n_arr; i += stride) {
         out[i] = 0.0f;
+        if (!mask[i]) continue; // skip if mask is false
+
 
         // loop over kernel
+        int n_valid{ 0 }; // count number of valid array elements used in convolution
         for (int j = 0; j < n_kernel; ++j) {
 
-            // index the array with implicitreversed kernel
+            // index the array with implicit reversed kernel
             int input_index = i - j + n_kernel / 2;
+            if (!mask[input_index]) continue; // skip if mask is false
 
             if (input_index >= 0 && input_index < n_arr) {
                 out[i] += arr[input_index] * kernel[j];
