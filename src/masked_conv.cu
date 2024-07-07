@@ -26,12 +26,9 @@ __global__ void convolution_1d(
     int stride{ b_dim * gridDim.x }; // total number of threads
 
     for (int i = idx; i < n_arr; i += stride) {
-        out[i] = 0.0f;
         if (!mask[i]) continue; // skip if mask is false
 
-
         // loop over kernel
-        int n_valid{ 0 }; // count number of valid array elements used in convolution
         for (int j = 0; j < n_kernel; ++j) {
 
             // index the array with implicit reversed kernel
@@ -76,22 +73,6 @@ int main() {
     for (int i = 0; i < kernel_size; i++) {
         kernel[i] = 4.0f + i;
     }
-
-
-    // Initialize variables
-    // for (int i = 0; i < vector_size; i++) {
-    //     v1[i] = 4.0f;
-    //     if (i % 2 == 0) {
-    //         mask[i] = true;
-    //     }
-    //     else {
-    //         mask[i] = false;
-    //     }
-    // }
-
-    // for (int i = 0; i < kernel_size; i++) {
-    //     kernel[i] = 1.0f / kernel_size;
-    // }
 
     // Launch kernel
     convolution_1d << < num_blocks, block_size >> > (v_out, v1, vector_size, kernel, kernel_size, mask, 0.0f);
