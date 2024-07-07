@@ -6,6 +6,7 @@
 *.fatbin
 
 # Build files
+/build
 *.exe
 *.exp
 *.lib
