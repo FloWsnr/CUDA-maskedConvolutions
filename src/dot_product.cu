@@ -2,8 +2,16 @@
  * Simple kernel to compute the dot product (skalar product) of two vectors
  ********************************************************************/
 #include <iostream>
+#include <chrono>
 #include <cooperative_groups.h>
 namespace cg = cooperative_groups;
+
+void dot_product_cpu(float* out, float* v1, float* v2, int n) {
+    for (int i = 0; i < n; i++) {
+        *out += v1[i] * v2[i];
+    }
+
+}
 
 __global__ void dot_product(float* out, float* v1, float* v2, int n) {
 
@@ -60,43 +68,74 @@ __global__ void dot_product(float* out, float* v1, float* v2, int n) {
 
 int main() {
     int vector_size = 10000000;
-
-    // TODO: use deviceQuery to get best block size
-    int block_size = 256;
-    // rounded up to nearest multiple of block size
-    int num_blocks = (vector_size + block_size - 1) / block_size;
-
+    /*********************************************************************
+    ******************** CPU version
+    ********************************************************************/
     // Declare variables
-    float* v1;
-    float* v2;
-    float* v_out;
-
-
-    // Allocate memory
-    cudaMallocManaged(&v1, vector_size * sizeof(float));
-    cudaMallocManaged(&v2, vector_size * sizeof(bool));
-    cudaMallocManaged(&v_out, vector_size * sizeof(float));
+    float* v1{ new float[vector_size] };
+    float* v2{ new float[vector_size] };
+    float* v_out{ new float(0) };
 
     for (int i = 0; i < vector_size; i++) {
         v1[i] = 1.0f;
         v2[i] = 2.0f;
     }
-    *v_out = 0.0f;
 
-    // Launch kernel
-    dot_product << < num_blocks, block_size >> > (v_out, v1, v2, vector_size);
+    auto t1 = std::chrono::high_resolution_clock::now();
+    dot_product_cpu(v_out, v1, v2, vector_size);
+    auto t2 = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
 
-    // Wait for kernel to finish
-    cudaDeviceSynchronize();
-
-    // Print result
-    std::cout << *v_out << std::endl;
-
+    std::cout << "CPU: Time measured: " << duration * 1e-6 << " seconds." << std::endl;
+    std::cout << "Expected result:" << 2.0 * vector_size << std::endl;
+    std::cout << "Result:" << *v_out << std::endl;
 
     // Free memory
-    cudaFree(v1);
-    cudaFree(v2);
-    cudaFree(v_out);
+    delete[] v1;
+    delete[] v2;
+    delete v_out;
+
+    /*********************************************************************
+     * ****************** GPU version
+     * *******************************************************************/
+
+
+     // Declare variables
+    float* v3;
+    float* v4;
+    float* v_out_2;
+    // TODO: use deviceQuery to get best block size
+    int block_size = 256;
+    // rounded up to nearest multiple of block size
+    int num_blocks = (vector_size + block_size - 1) / block_size;
+
+    // Allocate memory
+    cudaMallocManaged(&v3, vector_size * sizeof(float));
+    cudaMallocManaged(&v4, vector_size * sizeof(float));
+    cudaMallocManaged(&v_out_2, sizeof(float));
+
+    for (int i = 0; i < vector_size; i++) {
+        v3[i] = 1.0f;
+        v4[i] = 2.0f;
+    }
+    *v_out_2 = 0.0f;
+
+    auto t3 = std::chrono::high_resolution_clock::now();
+    // Launch kernel
+    dot_product << < num_blocks, block_size >> > (v_out_2, v3, v4, vector_size);
+    // Wait for kernel to finish
+    cudaDeviceSynchronize();
+    auto t4 = std::chrono::high_resolution_clock::now();
+    auto duration2 = std::chrono::duration_cast<std::chrono::milliseconds>(t4 - t3).count();
+    std::cout << "GPU: Time measured: " << duration2 * 1e-6 << " seconds." << std::endl;
+    // Print result
+    std::cout << "Expected result:" << 2.0 * vector_size << std::endl;
+    std::cout << "Result:" << *v_out_2 << std::endl;
+
+    // Free memory
+    cudaFree(v3);
+    cudaFree(v4);
+    cudaFree(v_out_2);
 
     return 0;
 }
