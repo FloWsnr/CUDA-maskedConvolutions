@@ -36,7 +36,7 @@ Second element: 0.25 * invalid + 0.5 * 2 + 0.25 * 1
 Third element:  0.25 * 2 + 0.5 * 1 + 0 (zero padding) * 0.25
     Similar calculations are performed for zero padding.
     0.33 * 2 + 0.66 * 1 = 1.32
-}
+
 => [invalid, 1.66, 1.32]
 ```
 
