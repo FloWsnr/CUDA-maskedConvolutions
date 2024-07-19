@@ -48,6 +48,8 @@ __global__ void convolution_1d_kernel(
 }
 
 void convolution_1d(
+    int grid_size,
+    int block_size,
     float* out,
     float* arr,
     int n_arr,
@@ -55,7 +57,7 @@ void convolution_1d(
     int n_kernel,
     bool* mask,
     float pad_val) {
-    convolution_1d_kernel << <1, 1 >> > (
+    convolution_1d_kernel << <grid_size, block_size >> > (
         out, arr, n_arr, kernel, n_kernel, mask, pad_val
         );
 }

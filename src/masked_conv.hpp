@@ -1,6 +1,9 @@
 #pragma once
 
-void convolution_1d(float* out,
+void convolution_1d(
+    int grid_size,
+    int block_size,
+    float* out,
     float* arr,
     int n_arr,
     float* kernel,
