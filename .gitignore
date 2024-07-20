@@ -10,3 +10,6 @@
 *.exe
 *.exp
 *.lib
+
+# vsc files
+.vscode
