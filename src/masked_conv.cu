@@ -20,12 +20,12 @@ __global__ void convolution_1d_kernel(
     bool* mask,
     float pad_val) {
 
-    int t_idx{ threadIdx.x }; // thread index
-    int b_dim{ blockDim.x }; // number of threads per block
-    int b_idx{ blockIdx.x }; // block index
+    unsigned int t_idx{ threadIdx.x }; // thread index
+    unsigned int b_dim{ blockDim.x }; // number of threads per block
+    unsigned int b_idx{ blockIdx.x }; // block index
 
-    int idx{ b_idx * b_dim + t_idx };
-    int stride{ b_dim * gridDim.x }; // total number of threads
+    unsigned int idx{ b_idx * b_dim + t_idx };
+    unsigned int stride{ b_dim * gridDim.x }; // total number of threads
 
     for (int i = idx; i < n_arr; i += stride) {
         if (!mask[i]) continue; // skip if mask is false
