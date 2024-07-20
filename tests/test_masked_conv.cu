@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include "masked_conv.hpp"
 
-TEST(Conv1D, TestResult) {
+TEST(Conv1D, TestNormalConvWorks) {
   int vector_size = 3;
   int kernel_size = 3;
 
@@ -41,6 +41,8 @@ TEST(Conv1D, TestResult) {
 
   // Check results
   EXPECT_EQ(v_out[0], 13.0f);
+  EXPECT_EQ(v_out[1], 28.0f);
+  EXPECT_EQ(v_out[2], 27.0f);
 
   // Free memory
   cudaFree(v1);
