@@ -29,6 +29,7 @@ int main() {
         printf("  Max block dimensions: %d %d %d\n", prop.maxThreadsDim[0], prop.maxThreadsDim[1], prop.maxThreadsDim[2]);
         printf("  Max grid dimensions: %d %d %d\n", prop.maxGridSize[0], prop.maxGridSize[1], prop.maxGridSize[2]);
         printf("  SM count: %d\n", prop.multiProcessorCount);
+        printf("  Max. threads per SM: %d\n", prop.maxThreadsPerMultiProcessor);
 
     }
 }
