@@ -17,7 +17,7 @@ include_directories("${CMAKE_SOURCE_DIR}/src")
 add_library(${LIB_NAME} STATIC src/masked_conv.cu src/masked_conv.hpp)
 # set_target_properties(masked_conv PROPERTIES
 #                             CUDA_SEPARABLE_COMPILATION ON)
-set_target_properties(masked_conv PROPERTIES CUDA_ARCHITECTURES 75)
+set_target_properties(masked_conv PROPERTIES CUDA_ARCHITECTURES 86)
 
 # Tests
 enable_testing()
