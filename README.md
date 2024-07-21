@@ -48,4 +48,5 @@ The source code can be used as a [raw kernel](https://docs.cupy.dev/en/stable/us
 Alternatively, the kernels can be compiled and then used as [raw modules](https://docs.cupy.dev/en/stable/user_guide/kernel.html#raw-modules) in cupy.
 
 ## Notes:
-- Thrust lib is awesome to use std-like features (vector, unique_ptr etc)
+- It might be worth to try General Matrix Multiplication (GEMM) with masking for even more acceleration. Hower, I did not find any masked GEMM implementation in cuBlas.
+- Thrust lib is awesome to use std-like features (vector, unique_ptr etc). However, it complicates the usage with Cupy, hence I did not use it here.
