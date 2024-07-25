@@ -31,7 +31,9 @@ add_library(${LIB_NAME} STATIC src/masked_conv.cu src/masked_conv.hpp)
 # set_target_properties(masked_conv PROPERTIES
 #                             CUDA_SEPARABLE_COMPILATION ON)
 set_target_properties(masked_conv PROPERTIES CUDA_ARCHITECTURES 86)
-
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_options(masked_conv PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-G>)
+endif()
 # Tests
 enable_testing()
 add_subdirectory(tests)
