@@ -11,7 +11,7 @@ FetchContent_MakeAvailable(googletest)
 # Add the tests #######################################
 #######################################################
 
-add_executable(tests test_masked_conv.cu)
+add_executable(tests test_mConv1D.cu test_mConv3D.cu)
 
 target_link_libraries(
   tests PRIVATE

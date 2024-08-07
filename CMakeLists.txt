@@ -23,16 +23,16 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 
-set(LIB_NAME masked_conv)
+set(LIB_NAME mConv)
 
 # Add src dir
 include_directories("${CMAKE_SOURCE_DIR}/src")
-add_library(${LIB_NAME} STATIC src/masked_conv.cu src/masked_conv.hpp)
+add_library(${LIB_NAME} STATIC src/mConv1D.cu src/mConv3D.cu src/mConv.hpp)
 # set_target_properties(masked_conv PROPERTIES
 #                             CUDA_SEPARABLE_COMPILATION ON)
-set_target_properties(masked_conv PROPERTIES CUDA_ARCHITECTURES 86)
+set_target_properties(${LIB_NAME} PROPERTIES CUDA_ARCHITECTURES 86)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_options(masked_conv PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-G>)
+    target_compile_options(${LIB_NAME} PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-G>)
 endif()
 # Tests
 enable_testing()
