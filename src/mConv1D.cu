@@ -13,21 +13,21 @@ namespace cg = cooperative_groups;
 
 __global__ void convolution_1d_kernel(
     float* out,
-    float* arr,
-    int n_arr,
-    float* kernel,
-    int n_kernel,
-    bool* mask,
-    float pad_val) {
+    const float* arr,
+    const int n_arr,
+    const float* kernel,
+    const int n_kernel,
+    const bool* mask,
+    const float pad_val) {
 
-    unsigned int t_idx{ threadIdx.x }; // thread index
-    unsigned int b_dim{ blockDim.x }; // number of threads per block
-    unsigned int b_idx{ blockIdx.x }; // block index
+    const unsigned int t_idx{ threadIdx.x }; // thread index
+    const unsigned int b_dim{ blockDim.x }; // number of threads per block
+    const unsigned int b_idx{ blockIdx.x }; // block index
 
-    unsigned int idx{ b_idx * b_dim + t_idx };
-    unsigned int stride{ b_dim * gridDim.x }; // total number of threads
+    const unsigned int idx{ b_idx * b_dim + t_idx };
+    const unsigned int stride{ b_dim * gridDim.x }; // total number of threads
 
-    for (int i = idx; i < n_arr; i += stride) {
+    for (auto i = idx; i < n_arr; i += stride) {
         if (!mask[i]) continue; // skip if mask is false
 
         // loop over kernel

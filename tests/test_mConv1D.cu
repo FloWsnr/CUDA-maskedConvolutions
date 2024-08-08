@@ -101,3 +101,4 @@ TEST(Conv1D, TestMaskedConvWorks) {
   cudaFree(v_out);
   cudaFree(mask);
 }
+
