@@ -13,3 +13,5 @@
 
 # vsc files
 .vscode
+
+benchmarks/
