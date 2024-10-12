@@ -40,7 +40,7 @@ endif()
 
 # Add profiling app
 add_executable(p_mConv1D apps/profile_mConv1D.cu)
-set_target_properties(p_mConv1D PROPERTIES CUDA_ARCHITECTURES 86)
+set_target_properties(p_mConv1D PROPERTIES CUDA_ARCHITECTURES "86")
 target_link_libraries(p_mConv1D PRIVATE ${LIB_NAME})
 
 # Tests
