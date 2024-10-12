@@ -26,3 +26,12 @@ void convolution_3d(
     int nz_kernel,
     bool* mask,
     float pad_val);
+
+void convolution_1d_cpu(
+    float* out,
+    float* arr,
+    int n_arr,
+    float* kernel,
+    int n_kernel,
+    bool* mask,
+    float pad_val);

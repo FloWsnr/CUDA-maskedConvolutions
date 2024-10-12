@@ -3,27 +3,6 @@
 #include <functional>
 #include "mConv.hpp"
 
-void conv_1d_cpu(float* out, float* arr, int n_arr, float* kernel, int n_kernel, bool* mask, float pad_val) {
-
-    for (int i = 0; i < n_arr; i++) {
-        if (!mask[i]) continue; // skip if mask is false
-
-        // loop over kernel
-        for (int j = 0; j < n_kernel; ++j) {
-
-            // index the array with implicit reversed kernel
-            int input_index = i - j + n_kernel / 2;
-            if (input_index >= 0 && input_index < n_arr) {
-                if (!mask[input_index]) continue; // skip if mask is false
-                out[i] += arr[input_index] * kernel[j];
-            }
-            else {
-                out[i] += pad_val * kernel[j];
-            }
-        }
-    }
-}
-
 auto benchmark_cpu(int vector_size, int kernel_size, int num_trials) {
 
     // Declare variables
@@ -53,7 +32,7 @@ auto benchmark_cpu(int vector_size, int kernel_size, int num_trials) {
     for (int i = 0; i < num_trials; i++) {
 
         auto start = std::chrono::high_resolution_clock::now();
-        conv_1d_cpu(v_out, v1, vector_size, kernel, kernel_size, mask, 0.0f);
+        convolution_1d_cpu(v_out, v1, vector_size, kernel, kernel_size, mask, 0.0f);
         // Record time
         auto end = std::chrono::high_resolution_clock::now();
         total_duration += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
