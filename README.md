@@ -4,7 +4,7 @@ Currently used to learn CUDA, hence the code is not production-ready and might n
 
 ## Motivation
 
-Masked convolutions are convolutions where the input array contain "invalid" elements which should not participate in the end result. For example, consider an array with 3 elements and a normalized kernel with 3 elements. Lets assume that the left element in the input array is invalid, i.e. the mask is [0,1,1].
+Masked convolutions are convolutions where the input array contain "invalid" elements which should not participate in the end result. For example, consider an array with 3 elements and a normalized kernel with 3 elements. Lets assume that the left element in the input array is invalid, i.e. the validity-mask is [0,1,1].
 ```
 arrary = [1,2,1]
 kernel = [0.25,0.5,0.25]
@@ -50,3 +50,4 @@ Alternatively, the kernels can be compiled and then used as [raw modules](https:
 ## Notes:
 - It might be worth to try General Matrix Multiplication (GEMM) with masking for even more acceleration. Hower, I did not find any masked GEMM implementation in cuBlas.
 - Thrust lib is awesome to use std-like features (vector, unique_ptr etc). However, it complicates the usage with Cupy, hence I did not use it here.
+- I did not test even kernel length yet. Might get wrong results..
