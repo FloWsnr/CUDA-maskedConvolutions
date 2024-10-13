@@ -48,7 +48,7 @@ auto benchmark_cpu(int vector_size, int kernel_size, int num_trials) {
     return duration;
 }
 
-auto benchmark_gpu(int vector_size, int kernel_size, int block_size, int num_blocks, int num_trials) {
+auto benchmark_gpu(int vector_size, int kernel_size, int num_trials) {
     float* v1;
     float* kernel;
     float* v_out;
@@ -82,7 +82,7 @@ auto benchmark_gpu(int vector_size, int kernel_size, int block_size, int num_blo
 
         auto start = std::chrono::high_resolution_clock::now();
         // Launch kernel
-        convolution_1d(num_blocks, block_size, v_out, v1, vector_size, kernel, kernel_size, mask, 0.0f);
+        convolution_1d(v_out, v1, vector_size, kernel, kernel_size, mask, 0.0f);
         // Wait for kernel to finish
         cudaDeviceSynchronize();
         // Record time
@@ -104,19 +104,15 @@ int main() {
 
 
     const int num_trials = 100;
-    int vector_size = 1024;
-    int kernel_size = 5;
+    int vector_size = 100024;
+    int kernel_size = 100;
 
     // Max concurrent threads = SM Count * threads per SM
     // = 68 * 1536 (for RTX 3080)
 
-    int block_size = 256;
-    int num_blocks = 10;
-
     auto cpu_duration = benchmark_cpu(vector_size, kernel_size, num_trials);
     std::cout << "CPU: Average time measured: " << cpu_duration << " nanoseconds." << std::endl;
 
-    auto gpu_duration = benchmark_gpu(vector_size, kernel_size, block_size, num_blocks, num_trials);
+    auto gpu_duration = benchmark_gpu(vector_size, kernel_size, num_trials);
     std::cout << "GPU: Average time measured: " << gpu_duration << " nanoseconds." << std::endl;
-
 }

@@ -1,15 +1,13 @@
 #pragma once
 
 void convolution_1d(
-    int grid_size,
-    int block_size,
     float* out,
-    float* arr,
-    int n_arr,
-    float* kernel,
-    int n_kernel,
-    bool* mask,
-    float pad_val);
+    const float* arr,
+    const int n_arr,
+    const float* kernel,
+    const int n_kernel,
+    const bool* mask,
+    const float pad_val);
 
 
 void convolution_3d(
@@ -29,9 +27,9 @@ void convolution_3d(
 
 void convolution_1d_cpu(
     float* out,
-    float* arr,
-    int n_arr,
-    float* kernel,
-    int n_kernel,
-    bool* mask,
-    float pad_val);
+    const float* arr,
+    const int n_arr,
+    const float* kernel,
+    const int n_kernel,
+    const bool* mask,
+    const float pad_val);
