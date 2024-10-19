@@ -51,3 +51,5 @@ Alternatively, the kernels can be compiled and then used as [raw modules](https:
 - It might be worth to try General Matrix Multiplication (GEMM) with masking for even more acceleration. Hower, I did not find any masked GEMM implementation in cuBlas.
 - Thrust lib is awesome to use std-like features (vector, unique_ptr etc). However, it complicates the usage with Cupy, hence I did not use it here.
 - I did not test even kernel length yet. Might get wrong results..
+- Constant memory is not used here, since the kernel size is not known at compile time. If the kernel size is always below a certain length,
+we can allocate constant memory for the kernel and use it.

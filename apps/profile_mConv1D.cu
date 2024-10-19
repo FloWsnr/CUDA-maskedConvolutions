@@ -104,7 +104,7 @@ int main() {
 
 
     const int num_trials = 100;
-    int vector_size = 100000;
+    int vector_size = 1000000;
     int kernel_size = 100;
 
 
@@ -112,18 +112,18 @@ int main() {
     // = 68 * 1536 (for RTX 3080)
 
     auto cpu_duration = benchmark_cpu(vector_size, kernel_size, num_trials);
-    std::cout << "CPU: Average time measured: " << cpu_duration << " nanoseconds." << std::endl;
+    std::cout << "CPU - Average time measured: " << cpu_duration << " nanoseconds." << std::endl;
 
     int block_size = 256;
     auto gpu_duration = benchmark_gpu(block_size, vector_size, kernel_size, num_trials);
-    std::cout << "GPU - Block size: " << block_size << " Average time measured: " << gpu_duration << " nanoseconds." << std::endl;
+    std::cout << "GPU - Block size: " << block_size << " - Average time measured: " << gpu_duration << " nanoseconds." << std::endl;
 
     block_size = 512;
     gpu_duration = benchmark_gpu(block_size, vector_size, kernel_size, num_trials);
-    std::cout << "GPU - Block size: " << block_size << " Average time measured: " << gpu_duration << " nanoseconds." << std::endl;
+    std::cout << "GPU - Block size: " << block_size << "- Average time measured: " << gpu_duration << " nanoseconds." << std::endl;
 
     block_size = 1024;
     gpu_duration = benchmark_gpu(block_size, vector_size, kernel_size, num_trials);
-    std::cout << "GPU - Block size: " << block_size << " Average time measured: " << gpu_duration << " nanoseconds." << std::endl;
+    std::cout << "GPU - Block size: " << block_size << " - Average time measured: " << gpu_duration << " nanoseconds." << std::endl;
 
 }

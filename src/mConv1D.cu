@@ -69,9 +69,7 @@ __global__ void convolution_1d_kernel(
     }
 
     // Create a cooperative group for the block
-    auto block = cg::this_thread_block();
-    // Synchronize threads within the cooperative group
-    cg::sync(block);
+    cg::sync(cg::this_thread_block());
 
     // Compute only for threads that are not in the halo regions
     if (t_idx >= k_radius && t_idx < b_dim - k_radius) {
@@ -133,6 +131,11 @@ void convolution_1d(
     convolution_1d_kernel << <grid_size, block_size, shared_mem_size >> > (
         out, arr, n_arr, kernel, n_kernel, mask, pad_val
         );
+    cudaError_t err = cudaGetLastError();
+    if (err != cudaSuccess) {
+        fprintf(stderr, "Failed to launch convolution_1d_kernel (error code %s)!\n", cudaGetErrorString(err));
+        exit(EXIT_FAILURE);
+    }
 }
 
 void convolution_1d_cpu(
