@@ -4,8 +4,9 @@
 #include "mConv.hpp"
 
 TEST(Conv1D, TestNormalConvWorksSmall) {
-  int vector_size = 3;
-  int kernel_size = 3;
+  const int vector_size = 3;
+  const int kernel_size = 3;
+  const int block_size = 256;
 
   // Declare variables
   float* v1;
@@ -29,7 +30,7 @@ TEST(Conv1D, TestNormalConvWorksSmall) {
   }
 
   // Launch kernel
-  convolution_1d(v_out, v1, vector_size, kernel, kernel_size, mask, 0.0f);
+  convolution_1d(block_size, v_out, v1, vector_size, kernel, kernel_size, mask, 0.0f);
 
   // Wait for kernel to finish
   cudaDeviceSynchronize();
@@ -47,8 +48,9 @@ TEST(Conv1D, TestNormalConvWorksSmall) {
 }
 
 TEST(Conv1D, TestNormalConvWorksLarge) {
-  int vector_size = 12;
-  int kernel_size = 3;
+  const int vector_size = 12;
+  const int kernel_size = 3;
+  const int block_size = 256;
 
   // Declare variables
   float* v1;
@@ -72,7 +74,7 @@ TEST(Conv1D, TestNormalConvWorksLarge) {
   }
 
   // Launch kernel
-  convolution_1d(v_out, v1, vector_size, kernel, kernel_size, mask, 0.0f);
+  convolution_1d(block_size, v_out, v1, vector_size, kernel, kernel_size, mask, 0.0f);
 
   // Wait for kernel to finish
   cudaDeviceSynchronize();
@@ -100,8 +102,9 @@ TEST(Conv1D, TestNormalConvWorksLarge) {
 }
 
 TEST(Conv1D, TestMaskedConvWorks) {
-  int vector_size = 3;
-  int kernel_size = 3;
+  const int vector_size = 3;
+  const int kernel_size = 3;
+  const int block_size = 256;
 
   // Declare variables
   float* v1;
@@ -128,7 +131,7 @@ TEST(Conv1D, TestMaskedConvWorks) {
   mask[0] = false;
 
   // Launch kernel
-  convolution_1d(v_out, v1, vector_size, kernel, kernel_size, mask, 0.0f);
+  convolution_1d(block_size, v_out, v1, vector_size, kernel, kernel_size, mask, 0.0f);
 
   // Wait for kernel to finish
   cudaDeviceSynchronize();

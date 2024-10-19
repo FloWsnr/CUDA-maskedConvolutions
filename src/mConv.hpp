@@ -1,6 +1,7 @@
 #pragma once
 
 void convolution_1d(
+    const int block_size,
     float* out,
     const float* arr,
     const int n_arr,

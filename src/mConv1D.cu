@@ -112,6 +112,7 @@ __global__ void convolution_1d_kernel(
 }
 
 void convolution_1d(
+    const int block_size,
     float* out,
     const float* arr,
     const int n_arr,
@@ -120,7 +121,6 @@ void convolution_1d(
     const bool* mask,
     const float pad_val) {
 
-    const int block_size = 1024;  // Adjust based on your GPU's capabilities
     const int shared_mem_size = (block_size + n_kernel) * sizeof(float);
 
     // only some threads actually compute an element, i.e. the center threads
