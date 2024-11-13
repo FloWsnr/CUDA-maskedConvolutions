@@ -147,21 +147,59 @@ void convolution_1d_cpu(
     const bool* mask,
     const float pad_val) {
 
+    const int k_radius = n_kernel / 2;  // Precalculate kernel radius
+
     for (int i = 0; i < n_arr; i++) {
         if (!mask[i]) continue; // skip if mask is false
 
         // loop over kernel
+        float sum = 0.0f;
+        const int start_idx = i + k_radius;
         for (int j = 0; j < n_kernel; ++j) {
 
             // index the array with implicit reversed kernel
-            int input_index = i - j + n_kernel / 2;
+            int input_index = start_idx - j;
             if (input_index >= 0 && input_index < n_arr) {
                 if (!mask[input_index]) continue; // skip if mask is false
-                out[i] += arr[input_index] * kernel[j];
+                sum += arr[input_index] * kernel[j];
             }
             else {
-                out[i] += pad_val * kernel[j];
+                sum += pad_val * kernel[j];
             }
         }
+        out[i] = sum;
     }
 }
+
+
+// void convolution_1d_cpu(
+//     float* out,
+//     const float* arr,
+//     const int n_arr,
+//     const float* kernel,
+//     const int n_kernel,
+//     const bool* mask,
+//     const float pad_val) {
+
+//     const int k_radius = n_kernel / 2;  // Precalculate kernel radius
+
+//     for (int i = 0; i < n_arr; ++i) {
+//         if (!mask[i]) {
+//             continue;
+//         }
+
+//         float sum = 0.0f;  // Local accumulator
+//         const int start_idx = i - k_radius;
+
+//         // Vectorizable inner loop with better locality
+//         for (int j = 0; j < n_kernel; ++j) {
+//             const int input_index = start_idx + j;
+//             const float input_val = (input_index >= 0 && input_index < n_arr)
+//                 ? (mask[input_index] ? arr[input_index] : pad_val)
+//                 : pad_val;
+//             sum += input_val * kernel[j];
+//         }
+
+//         out[i] = sum;
+//     }
+// }
