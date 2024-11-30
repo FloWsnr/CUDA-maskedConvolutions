@@ -26,7 +26,7 @@ include_directories("${CMAKE_SOURCE_DIR}/src")
 set(LIB_NAME mConv)
 
 # Add core library
-add_library(${LIB_NAME} STATIC src/mConv1D.cu src/mConv3D.cu src/mConv.hpp)
+add_library(${LIB_NAME} STATIC src/mConv1D.cu src/mConv.hpp)
 set_target_properties(${LIB_NAME} PROPERTIES
     CUDA_ARCHITECTURES "86"
     POSITION_INDEPENDENT_CODE ON
