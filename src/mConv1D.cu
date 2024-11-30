@@ -170,36 +170,3 @@ void convolution_1d_cpu(
         out[i] = sum;
     }
 }
-
-
-// void convolution_1d_cpu(
-//     float* out,
-//     const float* arr,
-//     const int n_arr,
-//     const float* kernel,
-//     const int n_kernel,
-//     const bool* mask,
-//     const float pad_val) {
-
-//     const int k_radius = n_kernel / 2;  // Precalculate kernel radius
-
-//     for (int i = 0; i < n_arr; ++i) {
-//         if (!mask[i]) {
-//             continue;
-//         }
-
-//         float sum = 0.0f;  // Local accumulator
-//         const int start_idx = i - k_radius;
-
-//         // Vectorizable inner loop with better locality
-//         for (int j = 0; j < n_kernel; ++j) {
-//             const int input_index = start_idx + j;
-//             const float input_val = (input_index >= 0 && input_index < n_arr)
-//                 ? (mask[input_index] ? arr[input_index] : pad_val)
-//                 : pad_val;
-//             sum += input_val * kernel[j];
-//         }
-
-//         out[i] = sum;
-//     }
-// }

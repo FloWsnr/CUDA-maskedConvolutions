@@ -104,7 +104,7 @@ int main() {
 
 
     const int num_trials = 100;
-    int vector_size = 1000000;
+    int vector_size = 100000;
     int kernel_size = 100;
 
 
